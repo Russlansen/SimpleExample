@@ -13,8 +13,16 @@
 <body ng-controller="MainCtrl">
     <h2>{{title}}</h2>
     <button ng-click="getData()">GET</button>
-    <button ng-click="postData()">POST</button>
+    <button ng-click="postData()">POST</button><br/>
+    <input ng-model="simpleData" type="text"/>
+    <button ng-click="postSimpleData()">Simple POST</button>
 
-    <p>{{getResponse}}</p>
+    <p ng-if="!isEnumerable">{{getResponse}}</p>
+    <table ng-if="isEnumerable">
+        <tr ng-repeat="customer in getResponse">
+            <td>{{customer.Name}}</td>
+            <td>{{customer.Age}}</td>
+        </tr>
+    </table>    
 </body>
 </html>

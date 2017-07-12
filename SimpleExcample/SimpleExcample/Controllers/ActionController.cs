@@ -20,9 +20,15 @@ namespace SimpleExcample.Controllers
             return id;
         }
 
-        public Customer Post(Customer customer)
+        public IEnumerable<Customer> Post(IEnumerable<Customer> customer)
         {
             return customer;
+        }
+
+        [HttpPost]
+        public string GetString(string simpleText)
+        {
+            return simpleText;
         }
     }
 }
