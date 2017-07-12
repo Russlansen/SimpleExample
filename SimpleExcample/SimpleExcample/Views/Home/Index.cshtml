@@ -1,0 +1,20 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html ng-app="MainModule">
+<head>
+    <script src="~/Scripts/angular.min.js"></script>
+    <script src="~/Scripts/mainController.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body ng-controller="MainCtrl">
+    <h2>{{title}}</h2>
+    <button ng-click="getData()">GET</button>
+    <button ng-click="postData()">POST</button>
+
+    <p>{{getResponse}}</p>
+</body>
+</html>
