@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleExcample.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -14,9 +15,14 @@ namespace SimpleExcample.Controllers
             return "Test data from GET method";
         }
 
-        public string Post(string text)
+        public string Post(string id)
         {
-            return text;
+            return id;
+        }
+
+        public Customer Post(Customer customer)
+        {
+            return customer;
         }
     }
 }
