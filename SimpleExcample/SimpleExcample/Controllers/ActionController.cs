@@ -10,25 +10,35 @@ namespace SimpleExcample.Controllers
 {
     public class ActionController : ApiController
     {
-        public string Get()
-        {
-            return "Test data from GET method";
+        CustomerContext customerContext = new CustomerContext();
+        
+        public List<Customer> Get()
+        { 
+            return customerContext.GetUsers();
         }
 
-        public string Post(string id)
+        public List<Customer> Get(int id)
         {
-            return id;
+            List<Customer> customerToList = new List<Customer>();
+            customerToList.Add(customerContext.Get(id));
+            return customerToList;
         }
 
-        public IEnumerable<Customer> Post(IEnumerable<Customer> customer)
+        public void Post(Customer customer)
         {
-            return customer;
+            customerContext.Update(customer); ;
         }
 
-        [HttpPost]
-        public string GetString(string simpleText)
+        public Customer Put(Customer customer)
         {
-            return simpleText;
+            return customerContext.Create(customer);
         }
+
+        public void Delete(int id)
+        {
+            customerContext.Delete(id);
+        }
+
+        
     }
 }

@@ -1,48 +1,64 @@
 ﻿angular.module("MainModule", [])
     .controller("MainCtrl", function ($scope, $http) {
-        $scope.title = "MainTitle";
-        $scope.customers = [{ name: "Ivan", age: "22" },
-                            { name: "Oleg", age: "30" },
-                            { name: "Andrew", age: "32" },
-                            { name: "Roman", age: "23" }];
+        $scope.title = "Customers";
 
-        $scope.getData = function () {
+        $scope.idChange = function () {
+            if ($scope.customer.Id !== undefined) {
+                $http({
+                    method: 'GET',
+                    url: '../api/Action/' + $scope.customer.Id
+                }).then(function (response) {
+                    $scope.customer.Name = response.data.Name;
+                    $scope.customer.Age = response.data.Age;
+                }, function (error) {
+                    $scope.getResponse = error.data.Message;
+                });
+            }
+        }
+
+        $scope.getCustomers = function () {
             $http({
                 method: 'GET',
                 url: '../api/Action'
             }).then(function (response) {
                 $scope.getResponse = response.data;
-                $scope.isEnumerable = false;
             }, function (error) {
                 $scope.getResponse = error.data.Message;
-                $scope.isEnumerable = false;
             });
         }
 
-        $scope.postData = function () {
+        $scope.getCustomer = function () {
             $http({
-                method: 'POST',
-                data: $scope.customers,
-                url: '../api/Action'
+                method: 'GET',
+                url: '../api/Action/' + $scope.id
             }).then(function (response) {
                 $scope.getResponse = response.data;
-                $scope.isEnumerable = true;
             }, function (error) {
                 $scope.getResponse = error.data.Message;
-                $scope.isEnumerable = false;
             });
         }
 
-        $scope.postSimpleData = function () {
+        $scope.updateCustomer = function () {
             $http({
                 method: 'POST',
-                url: '../api/Action/' + $scope.simpleData
+                url: '../api/Action',
+                data: $scope.customer
             }).then(function (response) {
                 $scope.getResponse = response.data;
-                $scope.isEnumerable = false;
             }, function (error) {
                 $scope.getResponse = error.data.Message;
-                $scope.isEnumerable = false;
             });
         }
+
+        $scope.addCustomer = function () {
+            $http({
+                method: 'PUT',
+                url: '../api/Action',
+                data: $scope.newCustomer
+            }).then(function (response) {
+                $scope.getResponse = response.data;
+            }, function (error) {
+                $scope.getResponse = error.data.Message;
+            })
+        }        
     })
