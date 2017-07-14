@@ -2,6 +2,7 @@
     .controller("MainCtrl", function ($scope, $http) {
         $scope.title = "Customers";
         $scope.showMessage = false;
+        $scope.showErrorMessage = false;
 
         $scope.idChange = function () {
             if ($scope.customer.Id !== undefined) {
@@ -10,11 +11,13 @@
                     url: '../api/Action/' + $scope.customer.Id
                 }).then(function (response) {
                     $scope.showMessage = false;
+                    $scope.showErrorMessage = false;
                     $scope.customer.Name = response.data[0].Name;
                     $scope.customer.Age = response.data[0].Age;
                 }, function (error) {
-                    $scope.showMessage = true;
                     $scope.message = error.data.Message;
+                    $scope.showErrorMessage = true;
+                    $scope.showMessage = false;
                 });
             }
         }
@@ -25,10 +28,12 @@
                 url: '../api/Action'
             }).then(function (response) {
                 $scope.showMessage = false;
+                $scope.showErrorMessage = false;
                 $scope.getResponse = response.data;
             }, function (error) {
-                $scope.showMessage = true;
                 $scope.message = error.data.Message;
+                $scope.showErrorMessage = true;
+                $scope.showMessage = false;
             });
         }
 
@@ -38,10 +43,12 @@
                 url: '../api/Action/' + $scope.id
             }).then(function (response) {
                 $scope.showMessage = false;
+                $scope.showErrorMessage = false;
                 $scope.getResponse = response.data;
             }, function (error) {
-                $scope.showMessage = true;
                 $scope.message = error.data.Message;
+                $scope.showErrorMessage = true;
+                $scope.showMessage = false;
             });
         }
 
@@ -51,10 +58,14 @@
                 url: '../api/Action',
                 data: $scope.customer
             }).then(function (response) {
-                $scope.getCustomers();
                 $scope.message = "User updated";
+                $scope.showMessage = true;
+                $scope.showErrorMessage = false;
+                setTimeout(function () { $scope.getCustomers() }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
+                $scope.showErrorMessage = true;
+                $scope.showMessage = false;
             });
             $scope.showMessage = true;
         }
@@ -65,10 +76,14 @@
                 url: '../api/Action',
                 data: $scope.newCustomer
             }).then(function (response) {
-                $scope.getCustomers();
                 $scope.message = "User created";
+                $scope.showMessage = true;
+                $scope.showErrorMessage = false;
+                setTimeout(function () { $scope.getCustomers() }, 2000);
             }, function (error) {
-                $scope.getResponse = error.data.Message;
+                $scope.message = error.data.Message;
+                $scope.showErrorMessage = true;
+                $scope.showMessage = false;
             });
             $scope.showMessage = true;
         } 
@@ -78,12 +93,15 @@
                 method: 'DELETE',
                 url: '../api/Action/' + $scope.idDelete,
             }).then(function (response) {
-                $scope.getCustomers();
-                $scope.message = "User deleted";    
+                $scope.message = "User deleted";
+                $scope.showMessage = true;
+                $scope.showErrorMessage = false;
+                setTimeout(function () { $scope.getCustomers() }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
-            });
-            $scope.showMessage = true;
+                $scope.showErrorMessage = true;
+                $scope.showMessage = false;
+            });       
         }
         $scope.getCustomers();
     })
