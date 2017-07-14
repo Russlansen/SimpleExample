@@ -26,7 +26,7 @@ namespace SimpleExcample.Controllers
 
         public void Post(Customer customer)
         {
-            customerContext.Update(customer); ;
+            customerContext.Update(customer);
         }
 
         public Customer Put(Customer customer)
