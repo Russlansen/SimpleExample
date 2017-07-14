@@ -39,6 +39,6 @@ namespace SimpleExcample.Controllers
             customerContext.Delete(id);
         }
 
-        
+
     }
 }
