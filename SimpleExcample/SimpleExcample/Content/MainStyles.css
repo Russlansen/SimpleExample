@@ -13,3 +13,7 @@ input {
 .main {
     margin-top: 15px;
 }
+
+.page-settings {
+    height: 25px;
+}

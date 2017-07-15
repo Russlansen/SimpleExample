@@ -1,6 +1,9 @@
 ﻿angular.module("MainModule", [])
     .controller("MainCtrl", function ($scope, $http) {
         $scope.title = "Customers";
+        $scope.url = '../api/Action/';
+        const defaultNumberPerPage = 3;
+        $scope.maxCustomerPerPage = defaultNumberPerPage;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
 
@@ -8,7 +11,7 @@
             if ($scope.customer.Id !== undefined) {
                 $http({
                     method: 'GET',
-                    url: '../api/Action/' + $scope.customer.Id
+                    url: $scope.url + $scope.customer.Id
                 }).then(function (response) {
                     $scope.showMessage = false;
                     $scope.showErrorMessage = false;
@@ -22,10 +25,13 @@
             }
         }
 
-        $scope.getCustomers = function () {
+        $scope.getCustomers = function (page) {
+            if (typeof $scope.maxCustomerPerPage != "number") {
+                $scope.maxCustomerPerPage = defaultNumberPerPage;
+            }
             $http({
                 method: 'GET',
-                url: '../api/Action'
+                url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/' + page
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
@@ -40,7 +46,7 @@
         $scope.getCustomer = function () {
             $http({
                 method: 'GET',
-                url: '../api/Action/' + $scope.id
+                url: $scope.url + $scope.id
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
@@ -55,13 +61,13 @@
         $scope.updateCustomer = function () {
             $http({
                 method: 'POST',
-                url: '../api/Action',
+                url: $scope.url,
                 data: $scope.customer
             }).then(function (response) {
                 $scope.message = "User updated";
                 $scope.showMessage = true;
                 $scope.showErrorMessage = false;
-                setTimeout(function () { $scope.getCustomers() }, 2000);
+                setTimeout(function () { $scope.getCustomers(1) }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -73,13 +79,13 @@
         $scope.addCustomer = function () {
             $http({
                 method: 'PUT',
-                url: '../api/Action',
+                url: $scope.url,
                 data: $scope.newCustomer
             }).then(function (response) {
                 $scope.message = "User created";
                 $scope.showMessage = true;
                 $scope.showErrorMessage = false;
-                setTimeout(function () { $scope.getCustomers() }, 2000);
+                setTimeout(function () { $scope.getCustomers(1) }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -91,17 +97,17 @@
         $scope.deleteCustomer = function () {
             $http({
                 method: 'DELETE',
-                url: '../api/Action/' + $scope.idDelete,
+                url: $scope.url + $scope.idDelete,
             }).then(function (response) {
                 $scope.message = "User deleted";
                 $scope.showMessage = true;
                 $scope.showErrorMessage = false;
-                setTimeout(function () { $scope.getCustomers() }, 2000);
+                setTimeout(function () { $scope.getCustomers(1) }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
                 $scope.showMessage = false;
             });       
         }
-        $scope.getCustomers();
+        $scope.getCustomers(1);
     })

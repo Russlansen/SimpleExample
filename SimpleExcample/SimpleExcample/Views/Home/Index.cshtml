@@ -18,13 +18,19 @@
 
         <!--Get all customers block-->
         <button class="btn btn-info col-sm-offset-2 col-sm-8" 
-                ng-click="getCustomers()">Get all customers  <i class="glyphicon glyphicon-user"></i></button>
-        
+                ng-click="getCustomers(1)">Get all customers  <i class="glyphicon glyphicon-user"></i></button>
+        <div class="col-sm-12">
+            <label class="col-sm-offset-3 col-sm-4">Customers per page: </label>
+            <input class="col-sm-2 page-settings"
+                   ng-model="maxCustomerPerPage" ng-change="getCustomers(1)" 
+                   type="number" placeholder="Enter number" />
+        </div>
+            
         <br /><br />
 
         <!--Get customer by ID block-->
         <h4 class="text-center">Get customer by ID  <i class="glyphicon glyphicon-search"></i></h4>
-        <input class="glyphicon-adjust col-sm-offset-1 col-sm-6" 
+        <input class="col-sm-offset-1 col-sm-6" 
                ng-model="id" type="number" placeholder="Enter ID"/>
         <button class="btn col-sm-4" ng-click="getCustomer()">Get customer</button>
         
@@ -111,8 +117,15 @@
                     <td>{{customer.Age}}</td>
                 </tr>
             </table>
+            <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                <li class="page-item" ng-click="getCustomers(1)"><a class="page-link">1</a></li>
+                <li class="page-item" ng-click="getCustomers(2)"><a class="page-link">2</a></li>
+                <li class="page-item" ng-click="getCustomers(3)"><a class="page-link">3</a></li>
+                <li class="page-item" ng-click="getCustomers(4)"><a class="page-link">Next</a></li>
+            </ul>
         </div>
-               
+        
       </div> 
 </body>
 </html>

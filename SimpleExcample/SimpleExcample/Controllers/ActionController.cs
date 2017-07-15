@@ -12,9 +12,11 @@ namespace SimpleExcample.Controllers
     {
         CustomerContext customerContext = new CustomerContext();
         
-        public List<Customer> Get()
-        { 
-            return customerContext.GetUsers();
+        [ActionName("GetPagination")]
+        public List<Customer> GetPagination(int maxCustomerPerPage, int currentPage)
+        {
+            List<Customer> allCustomers = customerContext.GetUsers();
+            return PaginationHandler.GetPagination(allCustomers, maxCustomerPerPage, currentPage);
         }
 
         public List<Customer> Get(int id)

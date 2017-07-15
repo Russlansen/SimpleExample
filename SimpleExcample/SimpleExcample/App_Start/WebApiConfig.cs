@@ -19,6 +19,12 @@ namespace SimpleExcample
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Routes.MapHttpRoute(
+                name: "PaginationApi",
+                routeTemplate: "api/{controller}/{action}/{maxCustomerPerPage}/{currentPage}",
+                defaults: new {action = "GetPagination", maxCustomerPerPage = "3", currentPage = "1" }
+            );
         }
     }
 }
