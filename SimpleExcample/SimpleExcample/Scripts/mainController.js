@@ -6,6 +6,7 @@
         $scope.maxCustomerPerPage = defaultNumberPerPage;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
+        $scope.currentPage = 1;
 
         $scope.idChange = function () {
             if ($scope.customer.Id !== undefined) {
@@ -35,7 +36,9 @@
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
-                $scope.getResponse = response.data;
+                $scope.getResponse = response.data.customersForPagination;
+                $scope.paginationArray = response.data.TotalPages;
+                $scope.currentPage = page;
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -109,5 +112,16 @@
                 $scope.showMessage = false;
             });       
         }
+
+        $scope.previousPage = function () {
+            if ($scope.currentPage <= 1) return 1;
+            else return $scope.currentPage - 1;
+        }
+
+        $scope.nextPage = function () {
+            if ($scope.currentPage >= $scope.paginationArray.length) return $scope.paginationArray.length;
+            else return $scope.currentPage + 1;
+        }
+
         $scope.getCustomers(1);
     })
