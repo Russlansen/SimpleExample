@@ -33,7 +33,7 @@ namespace SimpleExcample.Models
             }
             if (customer != null)
                 return customer;
-            else return new Customer(0, "User not found", 0);
+            else return new Customer(0, "Customer not found", 0);
         }
 
         public Customer Create(Customer customer)

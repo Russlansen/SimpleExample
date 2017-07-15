@@ -12,7 +12,6 @@
     <script src="~/Scripts/mainController.js"></script>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
-    <script>document.cookie = "Test=ffff;path=/"</script>
 </head>
 <body ng-controller="MainCtrl">
     <div class="panel panel-default col-sm-offset-3 col-sm-6 main">
@@ -20,11 +19,11 @@
 
         <!--Get all customers block-->
         <button class="btn btn-info col-sm-offset-2 col-sm-8" 
-                ng-click="getCustomers(1)">Get all customers  <i class="glyphicon glyphicon-user"></i></button>
+                ng-click="getCustomers(currentPage)">Get all customers  <i class="glyphicon glyphicon-user"></i></button>
         <div class="col-sm-12">
             <label class="col-sm-offset-3 col-sm-4">Customers per page: </label>
             <input class="col-sm-2 page-settings"
-                   ng-model="maxCustomerPerPage" ng-change="getCustomers(1)" 
+                   ng-model="maxCustomerPerPage" ng-change="getCustomers(currentPage)" 
                    type="number" placeholder="Enter number" />
         </div>
             
@@ -42,14 +41,14 @@
         <div class="col-sm-12">
             <form name="updateCustomerForm" ng-submit="updateCustomer()" novalidate>
                 <h4 class="text-center">Update customer by ID  <i class="glyphicon glyphicon-pencil"></i></h4>
-                <input class="col-sm-offset-3 col-sm-6" ng-model="customer.Id"
+                <input class="col-sm-offset-3 col-sm-6" name="idInput" ng-model="customer.Id"
                        type="number" ng-change="idChange()" placeholder="Enter ID" required /><br />
 
                 <input class="col-sm-offset-3 col-sm-6" ng-model="customer.Name"
-                       type="text" ng-disabled="updateCustomerForm.$invalid" placeholder="Enter name"/>
+                       type="text" ng-disabled="updateCustomerForm.idInput.$invalid" placeholder="Enter name"/>
 
                 <input class="col-sm-offset-3 col-sm-6" ng-model="customer.Age"
-                       type="number" ng-disabled="updateCustomerForm.$invalid" placeholder="Enter age" />
+                       type="number" ng-disabled="updateCustomerForm.idInput.$invalid" placeholder="Enter age" />
                 <br /><br />
                 <button class="btn col-sm-offset-3 col-sm-6" type="submit"
                         ng-disabled="updateCustomerForm.$invalid">
@@ -124,8 +123,9 @@
             <div class="col-sm-12">
                 <ul class="pagination">
                     <li class="page-item" ng-click="getCustomers(previousPage())"><a class="page-link">Previous</a></li>
-                    <li class="page-item" ng-repeat="item in paginationArray"
-                        ng-click="getCustomers(item)"><a class="page-link">{{item}}</a></li>
+                    <li class="page-item" ng-repeat="item in paginationArray" ng-click="getCustomers(item)">
+                        <a class="page-link" ng-if="item == currentPage" style="font-weight:bold; color:#c9302c">{{item}}</a>
+                        <a class="page-link" ng-if="item != currentPage">{{item}}</a></li>
                     <li class="page-item" ng-click="getCustomers(nextPage())"><a class="page-link">Next</a></li>
                 </ul>
             </div>

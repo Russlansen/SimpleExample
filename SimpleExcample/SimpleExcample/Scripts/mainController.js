@@ -6,7 +6,8 @@
         $scope.maxCustomerPerPage = defaultNumberPerPage;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
-        $scope.currentPage = 1;
+        $scope.currentPage = sessionStorage.getItem('currentPage') != undefined ?
+                                        sessionStorage.getItem('currentPage') : 1;
 
         $scope.idChange = function () {
             if ($scope.customer.Id !== undefined) {
@@ -37,8 +38,15 @@
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
                 $scope.getResponse = response.data.customersForPagination;
-                $scope.paginationArray = response.data.TotalPages;
-                $scope.currentPage = page;
+                $scope.paginationArray = response.data.TotalPages;                
+                if ($scope.currentPage > $scope.paginationArray.length) {
+                    sessionStorage.setItem('currentPage', $scope.paginationArray.length);
+                    $scope.currentPage = sessionStorage.getItem('currentPage');
+                    $scope.getCustomers($scope.currentPage);
+                } else {
+                    sessionStorage.setItem('currentPage', page);
+                    $scope.currentPage = sessionStorage.getItem('currentPage');
+                }
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -70,7 +78,10 @@
                 $scope.message = "User updated";
                 $scope.showMessage = true;
                 $scope.showErrorMessage = false;
-                setTimeout(function () { $scope.getCustomers(1) }, 2000);
+                setTimeout(function () {
+                    $scope.getCustomers($scope.currentPage)
+                }, 2000);
+
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -88,7 +99,9 @@
                 $scope.message = "User created";
                 $scope.showMessage = true;
                 $scope.showErrorMessage = false;
-                setTimeout(function () { $scope.getCustomers(1) }, 2000);
+                setTimeout(function () {
+                    $scope.getCustomers($scope.currentPage)
+                }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -105,7 +118,9 @@
                 $scope.message = "User deleted";
                 $scope.showMessage = true;
                 $scope.showErrorMessage = false;
-                setTimeout(function () { $scope.getCustomers(1) }, 2000);
+                setTimeout(function () {
+                    $scope.getCustomers($scope.currentPage)
+                }, 2000);
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
@@ -120,8 +135,8 @@
 
         $scope.nextPage = function () {
             if ($scope.currentPage >= $scope.paginationArray.length) return $scope.paginationArray.length;
-            else return $scope.currentPage + 1;
+            else return parseInt($scope.currentPage) + 1;
         }
 
-        $scope.getCustomers(1);
+        $scope.getCustomers($scope.currentPage);
     })
