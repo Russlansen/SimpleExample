@@ -6,8 +6,9 @@
         $scope.maxCustomerPerPage = defaultNumberPerPage;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
-        $scope.currentPage = sessionStorage.getItem('currentPage') != undefined ?
-                                        sessionStorage.getItem('currentPage') : 1;
+        $scope.currentPage = (sessionStorage.getItem('currentPage') != undefined &&
+                              sessionStorage.getItem('currentPage') > 0) ?
+                              sessionStorage.getItem('currentPage') : 1;
 
         $scope.idChange = function () {
             if ($scope.customer.Id !== undefined) {
@@ -31,6 +32,9 @@
             if (typeof $scope.maxCustomerPerPage != "number") {
                 $scope.maxCustomerPerPage = defaultNumberPerPage;
             }
+            if (page <= 0) {
+                page = 1;
+            }
             $http({
                 method: 'GET',
                 url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/' + page
@@ -38,7 +42,7 @@
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
                 $scope.getResponse = response.data.customersForPagination;
-                $scope.paginationArray = response.data.TotalPages;                
+                $scope.paginationArray = response.data.TotalPages;
                 if ($scope.currentPage > $scope.paginationArray.length) {
                     sessionStorage.setItem('currentPage', $scope.paginationArray.length);
                     $scope.currentPage = sessionStorage.getItem('currentPage');
@@ -137,6 +141,5 @@
             if ($scope.currentPage >= $scope.paginationArray.length) return $scope.paginationArray.length;
             else return parseInt($scope.currentPage) + 1;
         }
-
         $scope.getCustomers($scope.currentPage);
     })
