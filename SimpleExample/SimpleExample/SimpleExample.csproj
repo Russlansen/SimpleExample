@@ -145,7 +145,7 @@
     </Compile>
     <Compile Include="Models\CustomerContext.cs" />
     <Compile Include="Models\Customer.cs" />
-    <Compile Include="Models\PaginationHandler.cs" />
+    <Compile Include="Models\Handlers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

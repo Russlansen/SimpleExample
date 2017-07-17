@@ -11,18 +11,17 @@ namespace SimpleExample.Controllers
     public class ActionController : ApiController
     {
         CustomerContext customerContext = new CustomerContext();
-        
+
         [ActionName("GetPagination")]
-        public PaginationHandler GetPagination(int maxCustomerPerPage, int currentPage)
+        public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int currentPage)
         {
-            PaginationHandler pager = new PaginationHandler();
-            pager.SetPagination(maxCustomerPerPage, currentPage);
-            return pager;
+            var handler = new QueryHandler("SELECT * FROM Customers ORDER BY id", maxCustomerPerPage, currentPage);
+            return customerContext.GetCustomersForPagination<Customer>(handler);
         }
 
         public List<Customer> Get(int id)
         {
-            List<Customer> customerToList = new List<Customer>();
+            var customerToList = new List<Customer>();
             customerToList.Add(customerContext.Get(id));
             return customerToList;
         }

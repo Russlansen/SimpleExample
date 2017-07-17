@@ -41,8 +41,9 @@
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
-                $scope.getResponse = response.data.customersForPagination;
+                $scope.getResponse = response.data.Customers;
                 $scope.paginationArray = response.data.TotalPages;
+
                 if ($scope.currentPage > $scope.paginationArray.length) {
                     sessionStorage.setItem('currentPage', $scope.paginationArray.length);
                     $scope.currentPage = sessionStorage.getItem('currentPage');
@@ -51,6 +52,7 @@
                     sessionStorage.setItem('currentPage', page);
                     $scope.currentPage = sessionStorage.getItem('currentPage');
                 }
+
             }, function (error) {
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
