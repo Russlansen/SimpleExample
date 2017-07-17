@@ -1,4 +1,4 @@
-﻿using SimpleExcample.Models;
+﻿using SimpleExample.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 
-namespace SimpleExcample.Controllers
+namespace SimpleExample.Controllers
 {
     public class ActionController : ApiController
     {
