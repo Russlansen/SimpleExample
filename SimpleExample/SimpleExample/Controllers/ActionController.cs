@@ -1,9 +1,5 @@
 ﻿using SimpleExample.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace SimpleExample.Controllers
@@ -12,18 +8,14 @@ namespace SimpleExample.Controllers
     {
         CustomerContext customerContext = new CustomerContext();
 
-        [ActionName("GetPagination")]
         public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int currentPage)
-        {
-            var sqlQuery = "SELECT * FROM Customers ORDER BY id";
-            return customerContext.GetCustomersForPagination<Customer>(sqlQuery, maxCustomerPerPage, currentPage);
+        {      
+            return customerContext.GetCustomersForPagination<Customer>(maxCustomerPerPage, currentPage);
         }
 
         public List<Customer> Get(int id)
         {
-            var customerToList = new List<Customer>();
-            customerToList.Add(customerContext.Get(id));
-            return customerToList;
+            return new List<Customer> { customerContext.Get(id) };
         }
 
         public void Post(Customer customer)
@@ -31,9 +23,9 @@ namespace SimpleExample.Controllers
             customerContext.Update(customer);
         }
 
-        public Customer Put(Customer customer)
+        public void Put(Customer customer)
         {
-            return customerContext.Create(customer);
+            customerContext.Create(customer);
         }
 
         public void Delete(int id)

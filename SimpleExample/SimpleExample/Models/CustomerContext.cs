@@ -2,41 +2,48 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Web;
 
 namespace SimpleExample.Models
 {
     public class CustomerContext
     {
         string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        const string tableName = "Customers2";
 
         public List<Customer> GetUsers()
         {
             var customers = new List<Customer>();
-            using (var db = new SqlConnection(connectionString))
+            try
             {
-                customers = db.Query<Customer>("SELECT * FROM Customers").ToList();
+                using (var db = new SqlConnection(connectionString))
+                {
+                    customers = db.Query<Customer>($"SELECT * FROM {tableName}").ToList();
+                }
             }
+            catch (Exception)
+            {
+                return null;
+            }
+
             return customers;
         }
 
-        public PaginationHandler<T> GetCustomersForPagination<T>(string sqlQuery, int maxCustomerPerPage, int currentPage)
+        public PaginationHandler<T> GetCustomersForPagination<T>(int maxCustomerPerPage, int currentPage)
         {
             int count;
             IEnumerable<T> customers;
             maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
-            var queryString = $"{sqlQuery} OFFSET {maxCustomerPerPage} * ({currentPage} - 1)" +
-                              $" ROWS FETCH NEXT {maxCustomerPerPage} ROWS ONLY";        
-                   
+            var queryString = $"SELECT * FROM {tableName} ORDER BY id OFFSET " +
+                              $"{maxCustomerPerPage} * ({currentPage} - 1)" +
+                              $" ROWS FETCH NEXT {maxCustomerPerPage} ROWS ONLY";                    
             try
             {
                 using (var db = new SqlConnection(connectionString))
                 {
                     customers = db.Query<T>(queryString);
-                    count = db.Query<int>("SELECT COUNT (*) FROM Customers").FirstOrDefault();
+                    count = db.Query<int>($"SELECT COUNT (*) FROM {tableName}").FirstOrDefault();
                 }
             }
             catch (Exception)
@@ -47,54 +54,72 @@ namespace SimpleExample.Models
         }
 
         public Customer Get(int id)
-        {
-            
+        {       
             Customer customer = null;
-            using (var db = new SqlConnection(connectionString))
+            try
             {
-                customer = db.Query<Customer>("SELECT * FROM Customers WHERE Id = @id", new { id }).FirstOrDefault();
+                using (var db = new SqlConnection(connectionString))
+                {
+                    customer = db.Query<Customer>($"SELECT * FROM {tableName} WHERE Id = { id }").FirstOrDefault();
+                }
+            }
+            catch (Exception)
+            {
+                return new Customer(0, "Customer not found", 0);
             }
             if (customer != null)
                 return customer;
             else return new Customer(0, "Customer not found", 0);
         }
 
-        public Customer Create(Customer customer)
+        public void Create(Customer customer)
         {
-            using (var db = new SqlConnection(connectionString))
+            try
             {
-                var sqlQuery = String.Format("INSERT INTO Customers (Name, Age) VALUES('{0}', {1})", customer.Name, customer.Age);
-                int? customerId = db.Query<int>(sqlQuery).FirstOrDefault();
-                if(customerId != null)
-                    customer.Id = (int)customerId;
+                using (var db = new SqlConnection(connectionString))
+                {
+                    var sqlQuery = String.Format($"INSERT INTO {tableName} (Name, Age) " +
+                                                 $"VALUES('{customer.Name}', {customer.Age})");
+
+                    db.Query<int>(sqlQuery);
+                }
             }
-            return customer;
+            catch (Exception)
+            {
+
+            }
         }
 
         public void Update(Customer customer)
         {
-            using (var db = new SqlConnection(connectionString))
+            try
             {
-                var sqlQuery = "UPDATE Customers SET Name = @Name, Age = @Age WHERE Id = @Id";
-                db.Execute(sqlQuery, customer);
+                using (var db = new SqlConnection(connectionString))
+                {
+                    var sqlQuery = $"UPDATE {tableName} SET Name = '{customer.Name}'," +
+                                   $" Age = {customer.Age} WHERE Id = {customer.Id}";
+                    db.Execute(sqlQuery);
+                }
+            }
+            catch (Exception)
+            {
+
             }
         }
 
         public void Delete(int id)
         {
-            using (var db = new SqlConnection(connectionString))
+            try
             {
-                var sqlQuery = "DELETE FROM Customers WHERE Id = @id";
-                db.Execute(sqlQuery, new { id });
+                using (var db = new SqlConnection(connectionString))
+                {
+                    var sqlQuery = $"DELETE FROM {tableName} WHERE Id = { id }";
+                    db.Execute(sqlQuery);
+                }
             }
-        }
-
-        public int GetCount()
-        {
-            using (var db = new SqlConnection(connectionString))
+            catch (Exception)
             {
-                var count = db.Query<int>("SELECT COUNT (*) FROM Customers").FirstOrDefault();
-                return count;
+
             }
         }
     }

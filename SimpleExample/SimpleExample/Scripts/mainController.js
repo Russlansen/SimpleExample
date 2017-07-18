@@ -6,7 +6,7 @@
         $scope.maxCustomerPerPage = defaultNumberPerPage;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
-        $scope.currentPage = (sessionStorage.getItem('currentPage') != undefined &&
+        $scope.currentPage = (sessionStorage.getItem('currentPage') !== undefined &&
                               sessionStorage.getItem('currentPage') > 0) ?
                               sessionStorage.getItem('currentPage') : 1;
 
@@ -29,7 +29,7 @@
         }
 
         $scope.getCustomers = function (page) {
-            if (typeof $scope.maxCustomerPerPage != "number") {
+            if (typeof $scope.maxCustomerPerPage !== "number") {
                 $scope.maxCustomerPerPage = defaultNumberPerPage;
             }
             if (page <= 0) {
