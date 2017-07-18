@@ -13,7 +13,7 @@ namespace SimpleExample.Models
         public PaginationHandler(IEnumerable<T> customers, int customersTotalCount, int maxCustomerPerPage)
         {
             this.Customers = customers;
-            maxInPage = maxInPage <= 0 ? 1 : maxInPage;
+            maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
             var countPages = (int)Math.Ceiling((double)customersTotalCount / (double)maxCustomerPerPage);
             TotalPages = new int[countPages];
             for (int i = 1; i <= countPages; i++) TotalPages[i-1] = i;
