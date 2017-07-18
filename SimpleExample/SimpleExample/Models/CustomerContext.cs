@@ -23,12 +23,14 @@ namespace SimpleExample.Models
             return customers;
         }
 
-        public PaginationHandler<T> GetCustomersForPagination<T>(QueryHandler handler)
+        public PaginationHandler<T> GetCustomersForPagination<T>(string sqlQuery, int maxCustomerPerPage, int currentPage)
         {
-            var queryString = $"{handler.SQL} OFFSET {handler.MaxInPage} * ({handler.CurrentPage} - 1)" +
-                              $" ROWS FETCH NEXT {handler.MaxInPage} ROWS ONLY";        
-            IEnumerable<T> customers;
             int count;
+            IEnumerable<T> customers;
+            maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
+            var queryString = $"{sqlQuery} OFFSET {maxCustomerPerPage} * ({currentPage} - 1)" +
+                              $" ROWS FETCH NEXT {maxCustomerPerPage} ROWS ONLY";        
+                   
             try
             {
                 using (var db = new SqlConnection(connectionString))
@@ -41,7 +43,7 @@ namespace SimpleExample.Models
             {
                 return null;
             }
-            return new PaginationHandler<T>(customers, count, handler.MaxInPage);
+            return new PaginationHandler<T>(customers, count, maxCustomerPerPage);
         }
 
         public Customer Get(int id)

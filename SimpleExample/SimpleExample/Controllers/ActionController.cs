@@ -15,8 +15,8 @@ namespace SimpleExample.Controllers
         [ActionName("GetPagination")]
         public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int currentPage)
         {
-            var handler = new QueryHandler("SELECT * FROM Customers ORDER BY id", maxCustomerPerPage, currentPage);
-            return customerContext.GetCustomersForPagination<Customer>(handler);
+            var sqlQuery = "SELECT * FROM Customers ORDER BY id";
+            return customerContext.GetCustomersForPagination<Customer>(sqlQuery, maxCustomerPerPage, currentPage);
         }
 
         public List<Customer> Get(int id)
