@@ -1,5 +1,7 @@
 ﻿using SimpleExample.Models;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 
 namespace SimpleExample.Controllers
@@ -9,7 +11,7 @@ namespace SimpleExample.Controllers
         CustomerContext customerContext = new CustomerContext();
 
         public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int currentPage)
-        {      
+        {
             return customerContext.GetCustomersForPagination<Customer>(maxCustomerPerPage, currentPage);
         }
 
@@ -30,7 +32,7 @@ namespace SimpleExample.Controllers
 
         public void Delete(int id)
         {
-            customerContext.Delete(id);
+            customerContext.Delete(id);       
         }
 
 

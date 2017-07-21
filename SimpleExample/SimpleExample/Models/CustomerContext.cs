@@ -1,16 +1,22 @@
 ﻿using Dapper;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web.Http;
 
 namespace SimpleExample.Models
 {
     public class CustomerContext
     {
         string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
-        const string tableName = "Customers2";
+        const string tableName = "Customers";
 
         public List<Customer> GetUsers()
         {
@@ -22,8 +28,9 @@ namespace SimpleExample.Models
                     customers = db.Query<Customer>($"SELECT * FROM {tableName}").ToList();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
                 return null;
             }
 
@@ -46,8 +53,9 @@ namespace SimpleExample.Models
                     count = db.Query<int>($"SELECT COUNT (*) FROM {tableName}").FirstOrDefault();
                 }
             }
-            catch (Exception)
-            {
+            catch (Exception ex)
+            {  
+                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
                 return null;
             }
             return new PaginationHandler<T>(customers, count, maxCustomerPerPage);
@@ -63,13 +71,12 @@ namespace SimpleExample.Models
                     customer = db.Query<Customer>($"SELECT * FROM {tableName} WHERE Id = { id }").FirstOrDefault();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new Customer(0, "Customer not found", 0);
+                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
             }
-            if (customer != null)
-                return customer;
-            else return new Customer(0, "Customer not found", 0);
+            if (customer == null) ThrowException(HttpStatusCode.NotFound, new { Message = $"Customer with ID = {id} not found" });
+            return customer;
         }
 
         public void Create(Customer customer)
@@ -84,43 +91,58 @@ namespace SimpleExample.Models
                     db.Query<int>(sqlQuery);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
             }
         }
 
         public void Update(Customer customer)
         {
+            int rowsAffected = 0;
             try
             {
                 using (var db = new SqlConnection(connectionString))
                 {
                     var sqlQuery = $"UPDATE {tableName} SET Name = '{customer.Name}'," +
                                    $" Age = {customer.Age} WHERE Id = {customer.Id}";
-                    db.Execute(sqlQuery);
+                    rowsAffected = db.Execute(sqlQuery);     
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
             }
+            if (rowsAffected == 0) ThrowException(HttpStatusCode.NotFound,
+                                   new { Message = $"Updating error. Customer with ID = {customer.Id} not found" });
         }
 
         public void Delete(int id)
         {
+            int rowsAffected = 0;
             try
             {
                 using (var db = new SqlConnection(connectionString))
                 {
                     var sqlQuery = $"DELETE FROM {tableName} WHERE Id = { id }";
-                    db.Execute(sqlQuery);
+                    rowsAffected = db.Execute(sqlQuery);   
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message});
             }
+            if (rowsAffected == 0) ThrowException(HttpStatusCode.NotFound,
+                                              new { Message = $"Deleting error. Customer with ID = {id} not found" });
+        }
+
+        private void ThrowException(HttpStatusCode statusCode, object exeptionContent)
+        {
+            var jsonExeption = JsonConvert.SerializeObject(exeptionContent);
+            var response = new HttpResponseMessage(statusCode);
+            response.Content = new StringContent(jsonExeption);
+            response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            throw new HttpResponseException(response);
         }
     }
 }

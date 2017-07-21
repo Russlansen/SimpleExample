@@ -16,12 +16,14 @@
                     method: 'GET',
                     url: $scope.url + $scope.customer.Id
                 }).then(function (response) {
+                    $scope.userNotFound = false;
                     $scope.showMessage = false;
                     $scope.showErrorMessage = false;
                     $scope.customer.Name = response.data[0].Name;
                     $scope.customer.Age = response.data[0].Age;
                 }, function (error) {
                     $scope.message = error.data.Message;
+                    $scope.userNotFound = true;
                     $scope.showErrorMessage = true;
                     $scope.showMessage = false;
                 });

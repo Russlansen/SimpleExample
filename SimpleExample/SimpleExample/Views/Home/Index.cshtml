@@ -42,13 +42,15 @@
                        type="number" ng-change="idChange()" placeholder="Enter ID" required /><br />
 
                 <input class="col-sm-offset-3 col-sm-6" ng-model="customer.Name"
-                       type="text" ng-disabled="updateCustomerForm.idInput.$invalid" placeholder="Enter name"/>
+                       type="text" ng-disabled="updateCustomerForm.idInput.$invalid || userNotFound" 
+                       placeholder="Enter name"/>
 
                 <input class="col-sm-offset-3 col-sm-6" ng-model="customer.Age"
-                       type="number" ng-disabled="updateCustomerForm.idInput.$invalid" placeholder="Enter age" />
+                       type="number" ng-disabled="updateCustomerForm.idInput.$invalid || userNotFound" 
+                       placeholder="Enter age" />
                 <br /><br />
                 <button class="btn col-sm-offset-3 col-sm-6" type="submit"
-                        ng-disabled="updateCustomerForm.$invalid">
+                        ng-disabled="updateCustomerForm.$invalid || userNotFound">
                     Update customer
                 </button>
             </form>
