@@ -17,3 +17,13 @@ input {
 .page-settings {
     height: 25px;
 }
+
+table>thead>tr>td{
+    cursor:pointer;
+}
+
+table > thead  tr :hover {
+    cursor: pointer;
+    background-color: #268ead;
+    font-weight: bold;
+}

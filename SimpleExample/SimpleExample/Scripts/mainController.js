@@ -6,6 +6,8 @@
         $scope.maxCustomerPerPage = defaultNumberPerPage;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
+        $scope.order = "ASC";
+        $scope.orderBy = "Id";
         $scope.currentPage = (sessionStorage.getItem('currentPage') !== undefined &&
                               sessionStorage.getItem('currentPage') > 0) ?
                               sessionStorage.getItem('currentPage') : 1;
@@ -39,15 +41,16 @@
             }
             $http({
                 method: 'GET',
-                url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/' + page
+                url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/' +
+                                        page + "/" + $scope.orderBy + "/" + $scope.order
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
                 $scope.getResponse = response.data.Customers;
+                $scope.allPages = response.data.CountPages;
                 $scope.paginationArray = response.data.TotalPages;
-
-                if ($scope.currentPage > $scope.paginationArray.length) {
-                    sessionStorage.setItem('currentPage', $scope.paginationArray.length);
+                if ($scope.currentPage > $scope.allPages) {
+                    sessionStorage.setItem('currentPage', $scope.allPages);
                     $scope.currentPage = sessionStorage.getItem('currentPage');
                     $scope.getCustomers($scope.currentPage);
                 } else {
@@ -59,7 +62,14 @@
                 $scope.message = error.data.Message;
                 $scope.showErrorMessage = true;
                 $scope.showMessage = false;
-            });
+                });
+        }
+
+        $scope.getCustomersOrder = function (orderBy) {
+            if ($scope.order === "ASC") $scope.order = "DESC"
+            else $scope.order = "ASC"
+            $scope.orderBy = orderBy;
+            $scope.getCustomers($scope.currentPage);
         }
 
         $scope.getCustomer = function () {
@@ -141,8 +151,8 @@
             else return $scope.currentPage - 1;
         }
 
-        $scope.nextPage = function () {
-            if ($scope.currentPage >= $scope.paginationArray.length) return $scope.paginationArray.length;
+        $scope.nextPage = function () {  
+            if ($scope.currentPage >= $scope.allPages) return $scope.allPages;
             else return parseInt($scope.currentPage) + 1;
         }
         $scope.getCustomers($scope.currentPage);

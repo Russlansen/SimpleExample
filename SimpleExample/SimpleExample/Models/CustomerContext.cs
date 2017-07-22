@@ -18,31 +18,13 @@ namespace SimpleExample.Models
         string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         const string tableName = "Customers";
 
-        public List<Customer> GetUsers()
-        {
-            var customers = new List<Customer>();
-            try
-            {
-                using (var db = new SqlConnection(connectionString))
-                {
-                    customers = db.Query<Customer>($"SELECT * FROM {tableName}").ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
-                return null;
-            }
-
-            return customers;
-        }
-
-        public PaginationHandler<T> GetCustomersForPagination<T>(int maxCustomerPerPage, int currentPage)
+        public PaginationHandler<T> GetCustomersForPagination<T>(int maxCustomerPerPage, int currentPage,
+                                                                             string orderBy, string order)
         {
             int count;
             IEnumerable<T> customers;
             maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
-            var queryString = $"SELECT * FROM {tableName} ORDER BY id OFFSET " +
+            var queryString = $"SELECT * FROM {tableName} ORDER BY {orderBy} {order} OFFSET " +
                               $"{maxCustomerPerPage} * ({currentPage} - 1)" +
                               $" ROWS FETCH NEXT {maxCustomerPerPage} ROWS ONLY";                    
             try
@@ -53,12 +35,12 @@ namespace SimpleExample.Models
                     count = db.Query<int>($"SELECT COUNT (*) FROM {tableName}").FirstOrDefault();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {  
-                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
+                ThrowException(HttpStatusCode.BadRequest, new { Message = "Action error" });
                 return null;
             }
-            return new PaginationHandler<T>(customers, count, maxCustomerPerPage);
+            return new PaginationHandler<T>(customers, count, maxCustomerPerPage, currentPage);
         }
 
         public Customer Get(int id)
@@ -71,9 +53,9 @@ namespace SimpleExample.Models
                     customer = db.Query<Customer>($"SELECT * FROM {tableName} WHERE Id = { id }").FirstOrDefault();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
+                ThrowException(HttpStatusCode.BadRequest, new { Message = "Action error" });
             }
             if (customer == null) ThrowException(HttpStatusCode.NotFound, new { Message = $"Customer with ID = {id} not found" });
             return customer;
@@ -91,9 +73,9 @@ namespace SimpleExample.Models
                     db.Query<int>(sqlQuery);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
+                ThrowException(HttpStatusCode.BadRequest, new { Message = "Action error" });
             }
         }
 
@@ -109,9 +91,9 @@ namespace SimpleExample.Models
                     rowsAffected = db.Execute(sqlQuery);     
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message });
+                ThrowException(HttpStatusCode.BadRequest, new { Message = "Action error" });
             }
             if (rowsAffected == 0) ThrowException(HttpStatusCode.NotFound,
                                    new { Message = $"Updating error. Customer with ID = {customer.Id} not found" });
@@ -128,9 +110,9 @@ namespace SimpleExample.Models
                     rowsAffected = db.Execute(sqlQuery);   
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ThrowException(HttpStatusCode.BadRequest, new { Message = ex.Message});
+                ThrowException(HttpStatusCode.BadRequest, new { Message = "Action error"});
             }
             if (rowsAffected == 0) ThrowException(HttpStatusCode.NotFound,
                                               new { Message = $"Deleting error. Customer with ID = {id} not found" });

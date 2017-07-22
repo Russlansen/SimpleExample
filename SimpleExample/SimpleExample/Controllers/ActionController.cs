@@ -10,9 +10,10 @@ namespace SimpleExample.Controllers
     {
         CustomerContext customerContext = new CustomerContext();
 
-        public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int currentPage)
+        public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int currentPage,
+                                                                     string orderBy, string order)
         {
-            return customerContext.GetCustomersForPagination<Customer>(maxCustomerPerPage, currentPage);
+            return customerContext.GetCustomersForPagination<Customer>(maxCustomerPerPage, currentPage, orderBy, order);
         }
 
         public List<Customer> Get(int id)
