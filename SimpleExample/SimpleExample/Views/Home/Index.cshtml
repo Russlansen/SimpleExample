@@ -1,5 +1,4 @@
-﻿@using SimpleExample.Models;
-@{
+﻿@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -116,7 +115,7 @@
             </table>
 
             <div class="text-center col-sm-12">
-                <ul class="pagination">
+                <ul class="pagination" style="cursor:pointer">
                     <li class="page-item" ng-click="getCustomers(previousPage())"><a class="page-link">Previous</a></li>
                     <li class="page-item" ng-repeat="item in paginationArray" ng-click="getCustomers(item)">
                         <a class="page-link" ng-if="item == currentPage" style="font-weight:bold; color:#c9302c">{{item}}</a>

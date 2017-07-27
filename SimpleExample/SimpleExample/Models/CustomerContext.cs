@@ -50,7 +50,8 @@ namespace SimpleExample.Models
             {
                 using (var db = new SqlConnection(connectionString))
                 {
-                    customer = db.Query<Customer>($"SELECT * FROM {tableName} WHERE Id = { id }").FirstOrDefault();
+                    var sqlQuery = $"SELECT * FROM {tableName} WHERE Id = @Id";
+                    customer = db.Query<Customer>(sqlQuery, new { Id = id }).FirstOrDefault();
                 }
             }
             catch (Exception)
@@ -67,10 +68,8 @@ namespace SimpleExample.Models
             {
                 using (var db = new SqlConnection(connectionString))
                 {
-                    var sqlQuery = String.Format($"INSERT INTO {tableName} (Name, Age) " +
-                                                 $"VALUES('{customer.Name}', {customer.Age})");
-
-                    db.Query<int>(sqlQuery);
+                    var sqlQuery = $"INSERT INTO {tableName} (Name, Age) VALUES(@Name, @Age)";
+                    db.Query<int>(sqlQuery, new { Name = customer.Name, Age = customer.Age });
                 }
             }
             catch (Exception)
@@ -86,9 +85,8 @@ namespace SimpleExample.Models
             {
                 using (var db = new SqlConnection(connectionString))
                 {
-                    var sqlQuery = $"UPDATE {tableName} SET Name = '{customer.Name}'," +
-                                   $" Age = {customer.Age} WHERE Id = {customer.Id}";
-                    rowsAffected = db.Execute(sqlQuery);     
+                    var sqlQuery = $"UPDATE {tableName} SET Name = @Name, Age = @Age WHERE Id = @Id";
+                    rowsAffected = db.Execute(sqlQuery, new { Name = customer.Name, Age = customer.Age, Id = customer.Id });     
                 }
             }
             catch (Exception)
@@ -106,8 +104,8 @@ namespace SimpleExample.Models
             {
                 using (var db = new SqlConnection(connectionString))
                 {
-                    var sqlQuery = $"DELETE FROM {tableName} WHERE Id = { id }";
-                    rowsAffected = db.Execute(sqlQuery);   
+                    var sqlQuery = $"DELETE FROM {tableName} WHERE Id = @Id";
+                    rowsAffected = db.Execute(sqlQuery, new { Id = id });   
                 }
             }
             catch (Exception)
