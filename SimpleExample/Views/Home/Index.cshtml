@@ -24,7 +24,12 @@
                    ng-model="maxCustomerPerPage" ng-change="getCustomers(currentPage)" 
                    type="number" placeholder="Enter number" />
         </div>
-            
+        <div class="col-sm-12">
+            <label class="col-sm-offset-3 col-sm-4">Total pages: </label>
+            <input class="col-sm-2 page-settings"
+                   ng-model="totalPages" ng-change="getCustomers(currentPage)"
+                   type="number" placeholder="Enter number" />
+        </div>   
         <br /><br />
 
         <h4 class="text-center">Get customer by ID  <i class="glyphicon glyphicon-search"></i></h4>

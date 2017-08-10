@@ -4,6 +4,8 @@
         $scope.url = '../api/Action/';
         const defaultNumberPerPage = 3;
         $scope.maxCustomerPerPage = defaultNumberPerPage;
+        const defaultTotalPages = 7;
+        $scope.totalPages = defaultTotalPages;
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
         $scope.order = "ASC";
@@ -33,16 +35,15 @@
         }
 
         $scope.getCustomers = function (page) {
-            if (typeof $scope.maxCustomerPerPage !== "number") {
-                $scope.maxCustomerPerPage = defaultNumberPerPage;
-            }
             if (page <= 0) {
                 page = 1;
             }
             $http({
                 method: 'GET',
-                url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/' +
-                                        page + "/" + $scope.orderBy + "/" + $scope.order
+                url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/'
+                                                   + $scope.totalPages + '/'
+                                                   + page + "/" + $scope.orderBy + "/"
+                                                   + $scope.order
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;

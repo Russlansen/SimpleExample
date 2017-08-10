@@ -9,32 +9,41 @@ namespace SimpleExample.Models
         public IEnumerable<T> Customers { get; internal set; }
         public int CountPages { get; }
         public int[] TotalPages { get; }
-        private int pagerMax = 9;
 
-        public PaginationHandler(IEnumerable<T> customers, int customersTotalCount, int maxCustomerPerPage, int currentPage)
+        public PaginationHandler(IEnumerable<T> customers, int customersTotalCount, int maxCustomerPerPage, 
+                                                           int totalPagesMax, int currentPage)
         {
             this.Customers = customers;
             maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
+            totalPagesMax = totalPagesMax <= 0 ? 1 : totalPagesMax;
             CountPages = (int)Math.Ceiling((double)customersTotalCount / (double)maxCustomerPerPage);
-            int pagerMiddle = (int)Math.Ceiling((double)pagerMax / 2);
+            int pagerMiddle = (int)Math.Ceiling((double)totalPagesMax / 2);
 
-            if (pagerMax > CountPages) {
+            if (totalPagesMax > CountPages) {
                 TotalPages = new int[CountPages];
                 for (int i = 1; i <= CountPages; i++) TotalPages[i - 1] = i;
             }
             else
             {
-                TotalPages = new int[pagerMax];
+                int startPage = currentPage - (pagerMiddle - 1);
+                int endPage = totalPagesMax % 2 == 0 ? currentPage + (pagerMiddle) : currentPage + (pagerMiddle - 1);
+                TotalPages = new int[totalPagesMax];
+
                 if (currentPage < pagerMiddle)
-                    for (int i = 1; i <= pagerMax; i++) TotalPages[i - 1] = i;
+                {
+                    for (int i = 1; i <= totalPagesMax; i++) TotalPages[i - 1] = i;
+                }     
                 else if (currentPage >= pagerMiddle && currentPage <= CountPages - pagerMiddle)
-                    for (int i = currentPage - (pagerMiddle-1), j = 0; i <= currentPage + (pagerMiddle-1); i++, j++)
+                {
+                    for (int i = startPage, j = 0; i <= endPage; i++, j++)
                         TotalPages[j] = i;
+                }
                 else
-                    for (int i = CountPages - (pagerMax - 1), j = 0; i <= CountPages; i++, j++)
+                {
+                    for (int i = CountPages - (totalPagesMax - 1), j = 0; i <= CountPages; i++, j++)
                         TotalPages[j] = i;
+                }       
             }
-            
         }
     }
 }

@@ -22,8 +22,8 @@ namespace SimpleExample
 
             config.Routes.MapHttpRoute(
                 name: "PaginationApi",
-                routeTemplate: "api/{controller}/{action}/{maxCustomerPerPage}/{currentPage}/{orderBy}/{order}",
-                defaults: new {action = "GetPagination", maxCustomerPerPage = "3", currentPage = "1", orderBy = "Id", order = "ASC" }
+                routeTemplate: "api/{controller}/{action}/{maxCustomerPerPage}/{totalPages}/{currentPage}/{orderBy}/{order}",
+                defaults: new {action = "GetPagination", maxCustomerPerPage = "3", totalPages = "7", currentPage = "1", orderBy = "Id", order = "ASC" }
             );
         }
     }

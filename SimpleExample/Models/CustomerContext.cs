@@ -18,12 +18,13 @@ namespace SimpleExample.Models
         string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         const string tableName = "Customers";
 
-        public PaginationHandler<T> GetCustomersForPagination<T>(int maxCustomerPerPage, int currentPage,
+        public PaginationHandler<T> GetCustomersForPagination<T>(int maxCustomerPerPage, int totalPages, int currentPage,
                                                                              string orderBy, string order)
         {
             int count;
             IEnumerable<T> customers;
             maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
+            totalPages = totalPages <= 0 ? 1 : totalPages;
             var queryString = $"SELECT * FROM {tableName} ORDER BY {orderBy} {order} OFFSET " +
                               $"{maxCustomerPerPage} * ({currentPage} - 1)" +
                               $" ROWS FETCH NEXT {maxCustomerPerPage} ROWS ONLY";                    
@@ -40,7 +41,7 @@ namespace SimpleExample.Models
                 ThrowException(HttpStatusCode.BadRequest, new { Message = "Action error" });
                 return null;
             }
-            return new PaginationHandler<T>(customers, count, maxCustomerPerPage, currentPage);
+            return new PaginationHandler<T>(customers, count, maxCustomerPerPage, totalPages, currentPage);
         }
 
         public Customer Get(int id)
