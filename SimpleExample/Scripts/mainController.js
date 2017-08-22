@@ -1,11 +1,7 @@
 ﻿angular.module("MainModule", [])
     .controller("MainCtrl", function ($scope, $http) {
         $scope.title = "Customers";
-        $scope.url = '../api/Action/';
-        const defaultNumberPerPage = 3;
-        $scope.maxCustomerPerPage = defaultNumberPerPage;
-        const defaultTotalPages = 7;
-        $scope.totalPages = defaultTotalPages;
+        $scope.url = '../api/Customer/';
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
         $scope.order = "ASC";
@@ -13,7 +9,7 @@
         $scope.currentPage = (sessionStorage.getItem('currentPage') !== undefined &&
                               sessionStorage.getItem('currentPage') > 0) ?
                               sessionStorage.getItem('currentPage') : 1;
-
+        
         $scope.idChange = function () {
             if ($scope.customer.Id !== undefined) {
                 $http({
@@ -34,16 +30,16 @@
             }
         }
 
-        $scope.getCustomers = function (page) {
-            if (page <= 0) {
-                page = 1;
+        $scope.getCustomers = function (currentPage) {
+            if (currentPage <= 0) {
+                currentPage = 1;
             }
             $http({
                 method: 'GET',
-                url: $scope.url + 'GetPagination/' + $scope.maxCustomerPerPage + '/'
-                                                   + $scope.totalPages + '/'
-                                                   + page + "/" + $scope.orderBy + "/"
-                                                   + $scope.order
+                url: $scope.url + 'GetPagination/'  + $scope.maxCustomerPerPage + '/'
+                                                    + $scope.totalPagesMax + '/'
+                                                    + currentPage + "/" + $scope.orderBy + "/"
+                                                    + $scope.order
             }).then(function (response) {
                 $scope.showMessage = false;
                 $scope.showErrorMessage = false;
@@ -55,7 +51,7 @@
                     $scope.currentPage = sessionStorage.getItem('currentPage');
                     $scope.getCustomers($scope.currentPage);
                 } else {
-                    sessionStorage.setItem('currentPage', page);
+                    sessionStorage.setItem('currentPage', currentPage);
                     $scope.currentPage = sessionStorage.getItem('currentPage');
                 }
 

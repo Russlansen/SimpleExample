@@ -6,15 +6,15 @@ using System.Web.Http;
 
 namespace SimpleExample.Controllers
 {
-    public class ActionController : ApiController
+    public class CustomerController : ApiController
     {
         CustomerContext customerContext = new CustomerContext();
 
-        public PaginationHandler<Customer> GetPagination(int maxCustomerPerPage, int totalPages, int currentPage,
-                                                                     string orderBy, string order)
+        public PaginationHandler<Customer> GetPagination([FromUri]PaginationConfig<Customer> config)
         {
-            return customerContext.GetCustomersForPagination<Customer>(maxCustomerPerPage, totalPages, currentPage, orderBy, order);
+            return customerContext.GetPaginationHandler<Customer>(config);
         }
+
         public List<Customer> Get(int id)
         {
             return new List<Customer> { customerContext.Get(id) };

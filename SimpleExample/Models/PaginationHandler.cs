@@ -10,37 +10,36 @@ namespace SimpleExample.Models
         public int CountPages { get; }
         public int[] TotalPages { get; }
 
-        public PaginationHandler(IEnumerable<T> customers, int customersTotalCount, int maxCustomerPerPage, 
-                                                           int totalPagesMax, int currentPage)
+        public PaginationHandler(PaginationConfig<T> config)
         {
-            this.Customers = customers;
-            maxCustomerPerPage = maxCustomerPerPage <= 0 ? 1 : maxCustomerPerPage;
-            totalPagesMax = totalPagesMax <= 0 ? 1 : totalPagesMax;
-            CountPages = (int)Math.Ceiling((double)customersTotalCount / (double)maxCustomerPerPage);
-            int pagerMiddle = (int)Math.Ceiling((double)totalPagesMax / 2);
+            Customers = config.Customers;
+            config.MaxCustomerPerPage = config.MaxCustomerPerPage <= 0 ? 1 : config.MaxCustomerPerPage;
+            config.TotalPagesMax = config.TotalPagesMax <= 0 ? 1 : config.TotalPagesMax;
+            CountPages = (int)Math.Ceiling((double)config.CustomersTotalCount / (double)config.MaxCustomerPerPage);
+            int pagerMiddle = (int)Math.Ceiling((double)config.TotalPagesMax / 2);
 
-            if (totalPagesMax > CountPages) {
+            if (config.TotalPagesMax > CountPages) {
                 TotalPages = new int[CountPages];
                 for (int i = 1; i <= CountPages; i++) TotalPages[i - 1] = i;
             }
             else
             {
-                int startPage = currentPage - (pagerMiddle - 1);
-                int endPage = totalPagesMax % 2 == 0 ? currentPage + (pagerMiddle) : currentPage + (pagerMiddle - 1);
-                TotalPages = new int[totalPagesMax];
+                int startPage = config.CurrentPage - (pagerMiddle - 1);
+                int endPage = config.TotalPagesMax % 2 == 0 ? config.CurrentPage + (pagerMiddle) : config.CurrentPage + (pagerMiddle - 1);
+                TotalPages = new int[config.TotalPagesMax];
 
-                if (currentPage < pagerMiddle)
+                if (config.CurrentPage < pagerMiddle)
                 {
-                    for (int i = 1; i <= totalPagesMax; i++) TotalPages[i - 1] = i;
+                    for (int i = 1; i <= config.TotalPagesMax; i++) TotalPages[i - 1] = i;
                 }     
-                else if (currentPage >= pagerMiddle && currentPage <= CountPages - pagerMiddle)
+                else if (config.CurrentPage >= pagerMiddle && config.CurrentPage <= CountPages - pagerMiddle)
                 {
                     for (int i = startPage, j = 0; i <= endPage; i++, j++)
                         TotalPages[j] = i;
                 }
                 else
                 {
-                    for (int i = CountPages - (totalPagesMax - 1), j = 0; i <= CountPages; i++, j++)
+                    for (int i = CountPages - (config.TotalPagesMax - 1), j = 0; i <= CountPages; i++, j++)
                         TotalPages[j] = i;
                 }       
             }

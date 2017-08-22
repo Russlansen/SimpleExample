@@ -15,7 +15,6 @@
 <body ng-controller="MainCtrl">
     <div class="panel panel-default col-sm-offset-3 col-sm-6 main">
         <h1 class="text-center">{{title}} </h1>
-
         <button class="btn btn-info col-sm-offset-2 col-sm-8" 
                 ng-click="getCustomers(currentPage)">Get all customers  <i class="glyphicon glyphicon-user"></i></button>
         <div class="col-sm-12">
@@ -27,7 +26,7 @@
         <div class="col-sm-12">
             <label class="col-sm-offset-3 col-sm-4">Total pages: </label>
             <input class="col-sm-2 page-settings"
-                   ng-model="totalPages" ng-change="getCustomers(currentPage)"
+                   ng-model="totalPagesMax" ng-change="getCustomers(currentPage)"
                    type="number" placeholder="Enter number" />
         </div>   
         <br /><br />
