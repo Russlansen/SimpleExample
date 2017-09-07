@@ -13,8 +13,6 @@ namespace SimpleExample.Models
         public PaginationHandler(PaginationConfig<T> config)
         {
             Customers = config.Customers;
-            config.MaxCustomerPerPage = config.MaxCustomerPerPage <= 0 ? 1 : config.MaxCustomerPerPage;
-            config.TotalPagesMax = config.TotalPagesMax <= 0 ? 1 : config.TotalPagesMax;
             CountPages = (int)Math.Ceiling((double)config.CustomersTotalCount / (double)config.MaxCustomerPerPage);
             int pagerMiddle = (int)Math.Ceiling((double)config.TotalPagesMax / 2);
 

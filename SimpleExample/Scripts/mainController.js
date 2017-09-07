@@ -4,6 +4,10 @@
         $scope.url = '../api/Customer/';
         $scope.showMessage = false;
         $scope.showErrorMessage = false;
+        const defaultNumberPerPage = 3;
+        const defaultTotalPagesMax = 7;
+        $scope.maxCustomerPerPage = defaultNumberPerPage; 
+        $scope.totalPagesMax = defaultTotalPagesMax;
         $scope.order = "ASC";
         $scope.orderBy = "Id";
         $scope.currentPage = (sessionStorage.getItem('currentPage') !== undefined &&

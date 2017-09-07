@@ -11,19 +11,22 @@ using System.Web.Http;
 
 namespace SimpleExample.Models
 {
-    public class CustomerContext
+    public class CustomerContext<T> : ICustomersContext<T>
     {
-        string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+        private readonly string connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         const string tableName = "Customers";
 
-        public PaginationHandler<T> GetPaginationHandler<T>(PaginationConfig<T> config)
+        public PaginationHandler<T> GetPaginationHandler(PaginationConfig<T> config)
         {
+            config.MaxCustomerPerPage = config.MaxCustomerPerPage <= 0 ? 1 : config.MaxCustomerPerPage;
+            config.TotalPagesMax = config.TotalPagesMax <= 0 ? 1 : config.TotalPagesMax;
+
             var queryString = $"SELECT * FROM {tableName} ORDER BY {config.OrderBy} {config.Order} OFFSET " +
                               $"{config.MaxCustomerPerPage} * ({config.CurrentPage} - 1)" +
                               $" ROWS FETCH NEXT {config.MaxCustomerPerPage} ROWS ONLY";
             try
             {
-                using (var db = new SqlConnection(connectionString))
+                using (var db = Connect())
                 {
                     config.Customers = db.Query<T>(queryString);
                     config.CustomersTotalCount = db.Query<int>($"SELECT COUNT (*) FROM {tableName}").FirstOrDefault();
@@ -42,7 +45,7 @@ namespace SimpleExample.Models
             Customer customer = null;
             try
             {
-                using (var db = new SqlConnection(connectionString))
+                using (var db = Connect())
                 {
                     var sqlQuery = $"SELECT * FROM {tableName} WHERE Id = @Id";
                     customer = db.Query<Customer>(sqlQuery, new { Id = id }).FirstOrDefault();
@@ -60,7 +63,7 @@ namespace SimpleExample.Models
         {
             try
             {
-                using (var db = new SqlConnection(connectionString))
+                using (var db = Connect())
                 {
                     var sqlQuery = $"INSERT INTO {tableName} (Name, Age) VALUES(@Name, @Age)";
                     db.Query<int>(sqlQuery, new { Name = customer.Name, Age = customer.Age });
@@ -77,7 +80,7 @@ namespace SimpleExample.Models
             int rowsAffected = 0;
             try
             {
-                using (var db = new SqlConnection(connectionString))
+                using (var db = Connect())
                 {
                     var sqlQuery = $"UPDATE {tableName} SET Name = @Name, Age = @Age WHERE Id = @Id";
                     rowsAffected = db.Execute(sqlQuery, new { Name = customer.Name, Age = customer.Age, Id = customer.Id });     
@@ -96,7 +99,7 @@ namespace SimpleExample.Models
             int rowsAffected = 0;
             try
             {
-                using (var db = new SqlConnection(connectionString))
+                using (var db = Connect())
                 {
                     var sqlQuery = $"DELETE FROM {tableName} WHERE Id = @Id";
                     rowsAffected = db.Execute(sqlQuery, new { Id = id });   
@@ -117,6 +120,11 @@ namespace SimpleExample.Models
             response.Content = new StringContent(jsonExeption);
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             throw new HttpResponseException(response);
+        }
+
+        private SqlConnection Connect()
+        {
+            return new SqlConnection(connectionString);
         }
     }
 }
