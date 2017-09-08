@@ -10,6 +10,10 @@ namespace SimpleExcample.App_Start
 
     using Ninject;
     using Ninject.Web.Common;
+    using Ninject.Web.Mvc;
+    using System.Web.Http;
+    using Ninject.Web.WebApi;
+    using SimpleExample.Models;
 
     public static class NinjectWebCommon 
     {
@@ -39,13 +43,14 @@ namespace SimpleExcample.App_Start
         /// <returns>The created kernel.</returns>
         private static IKernel CreateKernel()
         {
-            var kernel = new StandardKernel();
+            var kernel = new StandardKernel();    
             try
             {
                 kernel.Bind<Func<IKernel>>().ToMethod(ctx => () => new Bootstrapper().Kernel);
                 kernel.Bind<IHttpModule>().To<HttpApplicationInitializationHttpModule>();
 
                 RegisterServices(kernel);
+                GlobalConfiguration.Configuration.DependencyResolver = new Ninject.Web.WebApi.NinjectDependencyResolver(kernel);
                 return kernel;
             }
             catch
@@ -61,6 +66,7 @@ namespace SimpleExcample.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            kernel.Bind<ICustomersContext<Customer>>().To<CustomerContext<Customer>>();
         }        
     }
 }

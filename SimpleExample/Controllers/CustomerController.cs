@@ -9,14 +9,11 @@ namespace SimpleExample.Controllers
 {
     public class CustomerController : ApiController
     {
-        IKernel customer;
-        ICustomersContext<Customer> customerContext;
+        private ICustomersContext<Customer> customerContext;
 
-        public CustomerController()
+        public CustomerController(ICustomersContext<Customer> customer)
         {
-            customer = new StandardKernel();
-            customer.Bind<ICustomersContext<Customer>>().To<CustomerContext<Customer>>();
-            customerContext = customer.Get<ICustomersContext<Customer>>();
+            customerContext = customer;
         }
 
         public PaginationHandler<Customer> GetPagination([FromUri]PaginationConfig<Customer> config)
